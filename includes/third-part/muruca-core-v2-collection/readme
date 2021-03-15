@@ -1,0 +1,9 @@
+# Editorial module
+
+This plugin is used to set a timeline and a map
+
+## API
+The available API for this plugin are:
+
+`/wp-json/muruca-core-v2/v1/views/time-events` 
+retrieves all time events
