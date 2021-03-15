@@ -1,0 +1,12 @@
+{
+    "name":"net7-wordpress-plugin\/a4v-collections",
+    "description":"A Wordpress plugin for composer.",
+    "type":"wordpress-plugin",
+    "authors":[
+        {
+            "name":"Chiara Aiola ",
+            "email":"aiola@netseven.it"
+        }
+    ],
+    "minimum-stability":"dev"
+}
