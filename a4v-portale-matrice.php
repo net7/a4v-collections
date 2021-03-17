@@ -36,11 +36,15 @@ define( 'MURUCA_CORE_V2_REST_VERSION',  "v1" );
 
 require plugin_dir_path( __FILE__ ) . 'includes/third-part/muruca-core-v2-collection/muruca-core-v2-collection.php';
 require plugin_dir_path( __FILE__ ) . 'includes/class-a4v-portale-matrice-collection.php';
+require plugin_dir_path( __FILE__ ) . 'admin/class-muruca-core-v2-admin.php';
 
 
 function run_a4v_portale_matrice_collection() {
     $plugin = new A4v_Portale_Matrice_Collection();
     $plugin->run();
+
+    $admin = new Muruca_Core_V2_Admin(MURUCA_CORE_COLLECTION_PLUGIN_NAME);
+    $admin->run();
 }
 
 run_a4v_portale_matrice_collection();

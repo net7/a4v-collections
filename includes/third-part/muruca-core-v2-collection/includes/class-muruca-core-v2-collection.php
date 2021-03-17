@@ -61,7 +61,7 @@ class Muruca_Core_V2_Collection
         add_action("init", array($this, "register_collection"));
        // add_action('rest_api_init', array($this, 'register_rest_route'));
        add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg'),  10, 2);
-       add_action( 'admin_menu', array($this, 'collection_menu'));
+      // add_action( 'admin_menu', array($this, 'collection_menu'));
        // add_filter('tiny_mce_before_init', array($this, "tiny_editor_settings"), 10, 2);
        // add_filter('wp_editor_settings', array($this, "editor_settings"), 10, 2);
     }

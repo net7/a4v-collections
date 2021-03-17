@@ -56,6 +56,8 @@ class A4v_Portale_Matrice_Collection
     public function __construct() {
         $this->collection_post_type = [MURUCA_CORE_PREFIX . "_collection-item", MURUCA_CORE_PREFIX . "_a4v-item"];        
 		$this->load_dependencies();
+
+        
     }
 
     public function run(){
@@ -64,14 +66,15 @@ class A4v_Portale_Matrice_Collection
         add_action('rest_api_init', array($this, 'register_rest_route'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg'),  10, 2);
         add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+        add_action( 'admin_menu', array($this, 'collection_menu'));
     }
 
     public function collection_menu() {
         add_menu_page(
-            "Muruca Collection",
-            'Muruca Collection',
+            "A4v Collection",
+            'A4v Collection',
             'edit_posts',
-            "edit.php?post_type=" . $this->collection_post_type[0],
+            MURUCA_CORE_COLLECTION_PLUGIN_NAME,
             '',
             'dashicons-book-alt',
             5
@@ -176,9 +179,10 @@ class A4v_Portale_Matrice_Collection
                                         'label' => 'Arianna4V Item',
                                         'name' => MURUCA_CORE_PREFIX . '_a4v_resource',
                                         'type' => 'a4v_field',
-                                        'arianna_graphql_url' => 'http://localhost:4000/',
+                                        'arianna_graphql_url' => get_option(MURUCA_CORE_PREFIX . "_graphql_url"),
                                         'arianna_graphql_token' => '',
                                         'arianna_post_type' => 'a4v_a4v-item',
+                                        'arianna_select_resource' => 1,
                                         'max' => 1,
                                     ),
                                 )
@@ -205,7 +209,42 @@ class A4v_Portale_Matrice_Collection
                         ),
                         'button_label' => 'Aggiungi risorsa'
                     ),
+                    array(
+                        'key' => self::ACF_PREFIX . 'collection_search_url',
+                        'label' => 'search url',
+                        'name' => MURUCA_CORE_PREFIX . '_collection_search_url',
+                        'type' => 'url',    
+                        'conditional_logic' => array(
+                            array(
+                                array(
+                                    'field' => self::ACF_PREFIX . 'collection_type',
+                                    'operator' => '==',
+                                    'value' => 'auto',
+                                ),
+                            ),
+                        ), 
+                    ),
+                    array(
+                        'key' => self::ACF_PREFIX . 'collection_max_items',
+                        'label' => 'max items to show',
+                        'name' => MURUCA_CORE_PREFIX . '_collection_max_items',
+                        'type' => 'number',
+                        'min' => 1,  
+                        'conditional_logic' => array(
+                            array(
+                                array(
+                                    'field' => self::ACF_PREFIX . 'collection_type',
+                                    'operator' => '==',
+                                    'value' => 'auto',
+                                ),
+                            ),
+                        ), 
+                        "wrapper" => [
+                            "width" => "10%"
+                        ]
+                    )
                 ),
+                'label_placement' => 'left',
                 'location' => array(
                     array(
                         array(
@@ -333,49 +372,62 @@ class A4v_Portale_Matrice_Collection
     }
 
     public function rest_response( $data ) {
+
         $offset = isset($data['offset']) ? (int) $data['offset'] : 0;
         $limit = isset($data['limit']) ? (int) $data['limit'] + $offset : -1;
-        $collection = get_post($data['id']);       
+        $collection = get_post($data['id']);   
+
         if (!$collection) return ["error" => "No collection found"];
-        $response = [];
 
-        if( have_rows(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID) ):
-            // Loop through rows.
-            $count = 0;
-            while ( have_rows(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID) 
-            && ( ($limit < 0 ) || ($limit > 0 && $count < $limit) ) ) : 
-                the_row();                
-                $count++;
-                if( $offset > 0 && $count <= $offset  ) continue;
-                $post_id = "";
-                if( get_row_layout() == 'a4v_a4v_resources' ):
-                    $post_id = get_sub_field(MURUCA_CORE_PREFIX . '_a4v_resource');                    
-                elseif( get_row_layout() == 'a4v_wp_resources' ): 
-                    $post_id = get_sub_field(MURUCA_CORE_PREFIX . '_wp_resource');
-                endif;
+        $results =  [ "title" => $collection->post_title ];
 
-                $post_id = is_array($post_id) ? $post_id[0] : $post_id;
-                $item_post = get_post($post_id);
-                if($item_post){
-                    $meta = a4v_get_arianna_item_metafields($post_id);
-                    $thumb = get_the_post_thumbnail_url($item_post);
-                    $response[] = [
-                        "title" => $item_post->post_title,
-                        "content" => $item_post->post_content,
-                        "background" => get_field(MURUCA_CORE_PREFIX . '_collection_item_background_color', $post_id),
-                        "image" => $thumb != "" ? $thumb : $meta[COLLECTION_ITEM_FIELD_IMAGE],
-                        "url" => get_field(MURUCA_CORE_PREFIX . '_collection_item_url', $post_id),
-                        "a4vId" => $meta[COLLECTION_ITEM_FIELD_ID]
-                    ];
-                }
+        $collection_type = get_field( MURUCA_CORE_PREFIX . "_collection_type", $collection->ID);
+        if( $collection_type == "single" ):
+            if( have_rows(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID) ):
+                // Loop through rows.
+                $response = [];
+                $count = 0;
+                while ( have_rows(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID) 
+                && ( ($limit < 0 ) || ($limit > 0 && $count < $limit) ) ) : 
+                    the_row();                
+                    $count++;
+                    if( $offset > 0 && $count <= $offset  ) continue;
+                    $post_id = "";
+                    if( get_row_layout() == 'a4v_a4v_resources' ):
+                        $post_id = get_sub_field(MURUCA_CORE_PREFIX . '_a4v_resource');                    
+                    elseif( get_row_layout() == 'a4v_wp_resources' ): 
+                        $post_id = get_sub_field(MURUCA_CORE_PREFIX . '_wp_resource');
+                    endif;
 
-            endwhile;       
+                    $post_id = is_array($post_id) ? $post_id[0] : $post_id;
+                    $item_post = get_post($post_id);
+                    if($item_post){
+                        $meta = a4v_get_arianna_item_metafields($post_id);
+                        $thumb = get_the_post_thumbnail_url($item_post);
+                        if( $thumb == "" ){
+                            $thumb = $meta[COLLECTION_ITEM_FIELD_IMAGE] ? $meta[COLLECTION_ITEM_FIELD_IMAGE] : null;
+                        }
+
+                        $response[] = [
+                            "title" => $item_post->post_title,
+                            "content" => $item_post->post_content,
+                            "background" => get_field(MURUCA_CORE_PREFIX . '_collection_item_background_color', $post_id),
+                            "image" => $thumb != "" ? $thumb : $meta[COLLECTION_ITEM_FIELD_IMAGE],
+                            "url" => get_field(MURUCA_CORE_PREFIX . '_collection_item_url', $post_id),
+                            "a4vId" => $meta[COLLECTION_ITEM_FIELD_ID] ? $meta[COLLECTION_ITEM_FIELD_ID] : null,
+                            "type" => $meta[COLLECTION_ITEM_FIELD_TYPE] ? $meta[COLLECTION_ITEM_FIELD_TYPE] : null
+                        ];
+                    }
+                endwhile;                  
+                $results["items"] = $response;
+            endif;
+
+        elseif ($collection_type == "auto"):
+            $results["search_url"] = get_field(MURUCA_CORE_PREFIX . "_collection_search_url", $collection->ID);
+            $results["max"] = get_field(MURUCA_CORE_PREFIX . "_collection_max_items", $collection->ID);
         endif;
 
-        return [
-                "title" => $collection->post_title,
-                "items" => $response
-            ];
+        return $results;
     }
 
     public function collections_response(){
