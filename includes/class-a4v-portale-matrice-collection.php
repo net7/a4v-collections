@@ -262,9 +262,9 @@ class A4v_Portale_Matrice_Collection
                 //mrc/timeline_acf_custom_fields filter for timeline custom fields
                 'fields' => array(
                     array(
-                        'key' => self::ACF_PREFIX . 'collection_item_text',
+                        'key' => self::ACF_PREFIX . 'collection_item_url',
                         'label' => 'url',
-                        'name' => MURUCA_CORE_PREFIX . '_text',
+                        'name' => MURUCA_CORE_PREFIX . '_collection_item_url',
                         'type' => 'text',                       
                     ),
                     array(
