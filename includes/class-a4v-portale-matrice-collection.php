@@ -387,6 +387,7 @@ class A4v_Portale_Matrice_Collection
                 // Loop through rows.
                 $response = [];
                 $count = 0;
+                $total =  count(get_field(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID));
                 while ( have_rows(MURUCA_CORE_PREFIX . '_collection_items', $collection->ID) 
                 && ( ($limit < 0 ) || ($limit > 0 && $count < $limit) ) ) : 
                     the_row();                
@@ -419,6 +420,7 @@ class A4v_Portale_Matrice_Collection
                         ];
                     }
                 endwhile;                  
+                $results["total"] = $total;
                 $results["items"] = $response;
             endif;
 
