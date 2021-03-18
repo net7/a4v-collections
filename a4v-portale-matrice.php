@@ -38,6 +38,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/third-part/muruca-core-v2-collec
 require plugin_dir_path( __FILE__ ) . 'includes/class-a4v-portale-matrice-collection.php';
 require plugin_dir_path( __FILE__ ) . 'admin/class-muruca-core-v2-admin.php';
 
+require_once plugin_dir_path( __FILE__ ) . 'includes/third-part/acf/acf.php';
 
 function run_a4v_portale_matrice_collection() {
     $plugin = new A4v_Portale_Matrice_Collection();
