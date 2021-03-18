@@ -93,7 +93,7 @@ class Muruca_Core_V2_Collection
             'show_in_rest' => true,
             "menu_position" => 4,
             'show_in_menu' => MURUCA_CORE_COLLECTION_PLUGIN_NAME,
-            'supports' => ["title", "editor"]
+            'supports' => ["title"]
         );
 
         $post_types[$this->collection_post_type] = $args;
