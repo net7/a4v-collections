@@ -133,13 +133,6 @@ class Muruca_Core_V2_Admin {
                 'label' => _x( "Url of graphql installation", "Option label in settings page" , MURUCA_CORE_TEXTDOMAIN ),
 				'attrs' => array( 'size' => 50 ),
 				'tab'   => 'main'
-            ),
-			MURUCA_CORE_PREFIX . "_types_filter" => array(
-                'label' => _x( "Types of OC and Entities to filter", "Option label in settings page" , MURUCA_CORE_TEXTDOMAIN ),
-                'info'  => "Example<br> a4.oc.ua.UA : unità archivistica ",
-				'attrs' => array( 'cols' => 50, 'rows' => 10 ),
-				'tab'   => 'main',
-                'type'  => 'textarea'
             )
 		); //general_options
     }
