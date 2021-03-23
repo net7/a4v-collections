@@ -379,7 +379,11 @@ class A4v_Portale_Matrice_Collection
 
         if (!$collection) return ["error" => "No collection found"];
 
-        $results =  [ "title" => $collection->post_title ];
+        $results =  [ 
+            "title" => $collection->post_title,
+            "text" => $collection->post_content,
+         ];
+        
 
         $collection_type = get_field( MURUCA_CORE_PREFIX . "_collection_type", $collection->ID);
         if( $collection_type == "single" ):
