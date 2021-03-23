@@ -420,7 +420,8 @@ class A4v_Portale_Matrice_Collection
                             "image" => $thumb != "" ? $thumb : $meta[COLLECTION_ITEM_FIELD_IMAGE],
                             "url" => get_field(MURUCA_CORE_PREFIX . '_collection_item_url', $post_id),
                             "a4vId" => $meta[COLLECTION_ITEM_FIELD_ID] ? $meta[COLLECTION_ITEM_FIELD_ID] : null,
-                            "type" => $meta[COLLECTION_ITEM_FIELD_TYPE] ? $meta[COLLECTION_ITEM_FIELD_TYPE] : null
+                            "type" => $meta[COLLECTION_ITEM_FIELD_TYPE] ? $meta[COLLECTION_ITEM_FIELD_TYPE] : null,
+                            "classification" => $meta[COLLECTION_ITEM_FIELD_CLASSIFICATION] ? $meta[COLLECTION_ITEM_FIELD_CLASSIFICATION] : null,
                         ];
                     }
                 endwhile;                  
