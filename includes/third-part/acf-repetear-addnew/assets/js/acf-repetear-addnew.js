@@ -1,10 +1,12 @@
 (function($){
   $(document).ready(function(){
+
+    var lastFieldToAdd;
     $("#modal-muruca-container")
         .on('shown.bs.modal', function(e) {
             e.preventDefault();
             var button = $(e.relatedTarget);
-            var modal = $(this).find('.modal'); 
+            lastFieldToAdd = jQuery(button).parents("[data-key=" + button.data('key') + "]");
             $.ajax({
                 url: options.ajaxurl,
                 data: {
@@ -52,7 +54,7 @@
           modal.modal('hide');
           var title = modal.find('.modal-title');
           title.html(title.data('default'));
-          var $select = $("#acf-"+result.field_key);
+          var $select = lastFieldToAdd;
           var $listLeft = $select.find('div.choices ul.acf-bl.list');
           var $listRight = $select.find('div.values ul.acf-bl.list');
           var buttons = '<a href="#" class="acf-icon -minus small dark" data-name="remove_item"></a><a href="#" class="acf-icon -pencil small dark" data-toggle="modal" data-target="#modal-addPostObject" data-name="edit_item"></a>';
@@ -60,6 +62,9 @@
           if( $listRight.length <= 0 ){
             $select.find('.select2-selection__rendered').html(result.title);
             $select.find('.select2-hidden-accessible').append('<option value="' + result.post_id  + '">' + result.title + '</option>');
+            /*if( $select.find('.select2-hidden-accessible').data("multiple") === 0){
+              $select.find(".acf-actions .acf-button").hide();
+            }*/
           }
           if (result.success == true && result.edit == "") {
             $listLeft.find('p').remove();

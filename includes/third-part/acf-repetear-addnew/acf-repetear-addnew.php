@@ -43,7 +43,7 @@ class AcfRepeaterAddNew
             $text = sprintf(__('Add %s'), $field['label']);
             $subtype = isset($field['subtype']) ? $field['subtype'] : '';
             $key = $field['key'];
-            $post_type = reset($field['post_type']);
+            $post_type = is_array( $field['post_type'])  ? reset($field['post_type']) : $field['post_type'];
 
             $button = <<<BTN
             <div style="margin-bottom:8px;"></div>

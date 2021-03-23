@@ -133,6 +133,11 @@ class Muruca_Core_V2_Admin {
                 'label' => _x( "Url of graphql installation", "Option label in settings page" , MURUCA_CORE_TEXTDOMAIN ),
 				'attrs' => array( 'size' => 50 ),
 				'tab'   => 'main'
+            ),
+			MURUCA_CORE_PREFIX . "_graphql_token" => array(
+                'label' => _x( "authorization token", "Option label in settings page" , MURUCA_CORE_TEXTDOMAIN ),
+				'attrs' => array( 'size' => 50 ),
+				'tab'   => 'main'
             )
 		); //general_options
     }
